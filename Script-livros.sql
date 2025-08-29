@@ -50,7 +50,7 @@ create table pedido(
 	cupom_aplicado varchar (5) 
 );
 	
-	
+	alter table pedido add vendedor_id int;
 
 create table item_pedido (
     pedido_id int,
@@ -62,6 +62,9 @@ create table item_pedido (
 
 alter table livro add constraint fk_editora_livro foreign key (editora_livro_id) references editora_livro (editora_livro_id);
 alter table pedido add constraint fk_cliente foreign key (cliente_id) references cliente (cliente_id);
+alter table item_pedido add constraint fk_pedido foreign key (pedido_id) references pedido (pedido_id);
+alter table item_pedido add constraint fk_livro foreign key (livro_id) references livro (livro_id);
+alter table pedido add constraint fk_vendedor foreign key (vendedor_id) references vendedor (vendedor_id);
 
 CREATE VIEW view_pedidos_clientes as SELECT 
   p.pedido_id,
@@ -110,17 +113,17 @@ INSERT INTO livro (nome_livro, nome_autor, sinopse, isbn, num_paginas, editora_l
 ('Fragmentos do Tempo', 'Eduardo Rocha', 'História alternativa do Brasil.', '978-3-16-148418-6', 350, 9),
 ('Ventos do Norte', 'Juliana Martins', 'Romance histórico no século XIX.', '978-3-16-148419-3', 290, 10);
 
-INSERT INTO pedido (cliente_id, valor_total, forma_pagamento, data_pedido, data_pagamento, cupom_aplicado) VALUES 
-(1, 120.00, 'Cartão', '2025-08-01', '2025-08-02', 'DESC'),
-(2, 85.50, 'Pix', '2025-07-15', '2025-07-16', NULL),
-(3, 200.00, 'Dinheiro', '2025-08-10', '2025-08-11', 'PROMO'),
-(4, 60.00, 'Cartão', '2025-06-20', '2025-06-21', NULL),
-(5, 150.00, 'Pix', '2025-07-30', '2025-07-31', 'DESC'),
-(6, 90.00, 'Dinheiro', '2025-05-25', '2025-05-26', NULL),
-(7, 110.00, 'Cartão', '2025-08-05', '2025-08-06', 'PROMO'),
-(8, 75.00, 'Pix', '2025-08-12', '2025-08-13', NULL),
-(9, 130.00, 'Dinheiro', '2025-07-01', '2025-07-02', 'DESC'),
-(10, 180.00, 'Cartão', '2025-08-15', '2025-08-16', NULL);
+INSERT INTO pedido (cliente_id, valor_total, forma_pagamento, data_pedido, data_pagamento, cupom_aplicado, vendedor_id) VALUES 
+(1, 120.00, 'Cartão', '2025-08-01', '2025-08-02', 'DESC', 1),
+(2, 85.50, 'Pix', '2025-07-15', '2025-07-16', null, 2),
+(3, 200.00, 'Dinheiro', '2025-08-10', '2025-08-11', 'PROMO', 3),
+(4, 60.00, 'Cartão', '2025-06-20', '2025-06-21', null, 4),
+(5, 150.00, 'Pix', '2025-07-30', '2025-07-31', 'DESC', 5),
+(6, 90.00, 'Dinheiro', '2025-05-25', '2025-05-26', null, 6),
+(7, 110.00, 'Cartão', '2025-08-05', '2025-08-06', 'PROMO', 7),
+(8, 75.00, 'Pix', '2025-08-12', '2025-08-13', null, 8),
+(9, 130.00, 'Dinheiro', '2025-07-01', '2025-07-02', 'DESC', 9),
+(10, 180.00, 'Cartão', '2025-08-15', '2025-08-16', null, 10);
 
 INSERT INTO item_pedido (pedido_id, livro_id, quantidade) VALUES 
 (1, 1, 1),
@@ -134,6 +137,19 @@ INSERT INTO item_pedido (pedido_id, livro_id, quantidade) VALUES
 (9, 9, 1),
 (10, 10, 1);
 
+INSERT INTO vendedor (nome_vendedor, data_nascimento, cpf, email, teve_indicacao) VALUES
+('Amanda Souza', '1990-03-15', '123.456.789-00', 'amanda@vendas.com', TRUE),
+('Bruno Lima', '1985-07-20', '234.567.890-11', 'bruno@vendas.com', FALSE),
+('Ana Clara Mendes', '1992-01-05', '345.678.901-22', 'ana.mendes@vendas.com', TRUE),
+('Carlos Silva', '1988-11-30', '456.789.012-33', 'carlos@vendas.com', FALSE),
+('Mariana Oliveira', '1995-04-12', '567.890.123-44', 'mariana@vendas.com', TRUE),
+('Felipe Santos', '1987-09-25', '678.901.234-55', 'felipe@vendas.com', FALSE),
+('Patrícia Gomes', '1993-06-18', '789.012.345-66', 'patricia@vendas.com', TRUE),
+('Ricardo Alves', '1982-12-02', '890.123.456-77', 'ricardo@vendas.com', FALSE),
+('Beatriz Rocha', '1991-08-09', '901.234.567-88', 'beatriz@vendas.com', TRUE),
+('João Pedro Martins', '1989-10-22', '012.345.678-99', 'joao.pedro@vendas.com', FALSE);
+
+
 CREATE VIEW view_livros_editoras AS
 SELECT 
   l.livro_id,
@@ -143,6 +159,3 @@ FROM livro l
 JOIN editora_livro e ON l.editora_livro_id = e.editora_livro_id;
 
 select*from view_livros_editoras;
-
-
-
